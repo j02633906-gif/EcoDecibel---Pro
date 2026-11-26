@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EcoDecibel Pro · Semáforo Ambiental de Ruido</title>
+<style>
+:root{--bg:#f6f2fb;--cd:#fff;--ink:#241433;--mu:#6b5a7c;--pr:#6a1b9a;--ac:#0e9f8e;--g:#22c55e;--y:#f5b301;--r:#ef4444;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150c1f;--cd:#22142f;--ink:#f3ecfa;--mu:#b9a8cc;--pr:#c77dff;--ac:#2fd4c0}}
+:root[data-theme="dark"]{--bg:#150c1f;--cd:#22142f;--ink:#f3ecfa;--mu:#b9a8cc;--pr:#c77dff;--ac:#2fd4c0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:0 16px 40px}
+h2{font-size:1.35rem;margin:.2em 0 .5em;color:var(--pr)}
+h3{margin:.8em 0 .2em;font-size:1rem}
+.tag{font-size:.75rem;letter-spacing:.12em;font-weight:700;color:var(--ac)}
+.hero{background:linear-gradient(160deg,#5b1a8b,#8e2de2 60%,#12b5a2);color:#fff;border-radius:0 0 28px 28px;padding:30px 20px;text-align:center;margin:0 -16px 20px}
+.hero h1{margin:.1em 0;font-size:2rem}
+.hero p{margin:.4em auto;max-width:34em}
+.q{font-style:italic;opacity:.95}
+.c{background:var(--cd);border-radius:20px;padding:18px;margin:16px 0;box-shadow:0 6px 20px rgba(80,20,120,.12)}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .6s,transform .6s}
+.rv.in{opacity:1;transform:none}
+.lt{display:flex;gap:12px;justify-content:center;margin:14px 0}
+.lp{width:52px;height:52px;border-radius:50%;background:currentColor;opacity:.22;transition:opacity .25s,box-shadow .25s}
+.lp.on{opacity:1;box-shadow:0 0 24px 8px currentColor}
+.lp.on.lr{animation:bl .5s infinite alternate}
+@keyframes bl{to{opacity:.55}}
+.lg{color:var(--g)}.ly{color:var(--y)}.lr{color:var(--r)}
+.db{font-size:2.6rem;font-weight:800}
+.grid{display:grid;gap:10px}
+.f{display:flex;gap:12px;align-items:flex-start}
+.f b{display:block}
+.ic{font-size:1.6rem;line-height:1}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:96px;padding:10px;border:2px solid var(--pr);background:none;color:var(--pr);border-radius:12px;font-weight:700;font-size:.95rem}
+.tabs button.on{background:var(--pr);color:#fff}
+.bar{height:16px;border-radius:8px;margin:16px 0 6px;transition:background .4s}
+input[type=range]{width:100%}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:12px auto}
+.kp button{aspect-ratio:1.3;border:0;border-radius:14px;background:linear-gradient(160deg,#8e2de2,#5b1a8b);color:#fff;font-size:1.5rem;font-weight:800;box-shadow:0 4px 0 #3d1060;transition:transform .1s,box-shadow .1s}
+.kp button:active,.kp button.on{transform:translateY(4px);box-shadow:0 0 0 #3d1060;background:linear-gradient(160deg,#12b5a2,#0e8f80)}
+#kd{min-height:3.2em;text-align:center}
+.note{font-size:.8rem;color:var(--mu)}
+.eq{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.eq span{background:var(--pr);color:#fff;padding:6px 14px;border-radius:999px;font-weight:600;font-size:.9rem}
+footer{text-align:center;font-size:.8rem;color:var(--mu);padding:10px 0}
+#sp{position:fixed;inset:0;z-index:99;background:linear-gradient(160deg,#5b1a8b,#8e2de2 65%,#12b5a2);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;overflow:hidden;transition:opacity .5s,visibility .5s}
+#sp.out{opacity:0;visibility:hidden}
+#sp h1{margin:.2em 0;animation:up .6s .7s both}
+#sp p{margin:.2em 0 1em;animation:up .6s .9s both}
+#sp button{padding:12px 26px;border:0;border-radius:999px;font-weight:800;color:#5b1a8b;background:#fff;animation:up .6s 1.1s both}
+.ck{position:relative;width:120px;height:120px;margin-bottom:18px}
+.ck i{position:absolute;inset:0;border-radius:50%;border:3px solid #fff;opacity:0;animation:rp 1.8s ease-out infinite}
+.ck i:nth-child(2){animation-delay:.6s}
+.ck svg{position:absolute;inset:0;width:100%;height:100%;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
+.ck circle{fill:#fff}
+.ck path{fill:none;stroke:#5b1a8b;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:80;stroke-dashoffset:80;animation:dr .5s .5s forwards}
+.cf{position:absolute;top:-16px;width:9px;height:14px;border-radius:2px;animation:fl linear forwards}
+@keyframes rp{0%{transform:scale(.8);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+@keyframes dr{to{stroke-dashoffset:0}}
+@keyframes up{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+@keyframes fl{to{transform:translateY(115vh) rotate(720deg)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style></head><body>
+
+<div id="sp">
+  <div class="ck"><i></i><i></i><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="56"/><path d="M36 62 L54 80 L86 44"/></svg></div>
+  <h1>¡Bienvenidos!</h1>
+  <p>EcoDecibel Pro · Semáforo Ambiental de Ruido</p>
+  <button id="go">Ver tríptico</button>
+</div>
+
+<main>
+<section class="hero">
+  <div class="tag" style="color:#bff">INNOVACIÓN TECNOLÓGICA EDUCATIVA</div>
+  <h1>EcoDecibel Pro</h1>
+  <p>Semáforo Ambiental Inteligente de Ruido con estimación en decibelios para aulas de estudio</p>
+  <div class="lt" id="hl"><div class="lp lg"></div><div class="lp ly"></div><div class="lp lr"></div></div>
+  <div class="db"><span id="hv">40</span> <small>~dB</small></div>
+  <p class="q">“Lo que no se mide, no se mejora. Transformamos el ruido invisible en concentración, salud y armonía escolar.”</p>
+</section>
+
+<section class="c rv">
+  <div class="tag">01 · EL DESAFÍO</div><h2>El enemigo silencioso del aprendizaje</h2>
+  <p>En las aulas, el ruido ambiental suele superar los niveles recomendados para estudiar.</p>
+  <h3>🌀 La trampa del efecto Lombard</h3>
+  <p>Cuando sube el murmullo, cada estudiante eleva su voz sin darse cuenta para hacerse oír, y se forma una espiral de ruido difícil de frenar.</p>
+  <div class="grid">
+    <div class="f"><span class="ic">🧠</span><div><b>Bloqueo cognitivo</b>Reduce la comprensión lectora, la memoria y el foco mental.</div></div>
+    <div class="f"><span class="ic">🗣️</span><div><b>Agotamiento docente</b>Obliga a interrumpir la clase y forzar la voz continuamente.</div></div>
+    <div class="f"><span class="ic">🙈</span><div><b>Ceguera sonora</b>Sin métricas visibles, nadie nota cuándo se cruza el límite saludable.</div></div>
+  </div>
+</section>
+
+<section class="c rv">
+  <div class="tag">02 · INGENIERÍA APLICADA</div><h2>Precisión acústica en tiempo real</h2>
+  <p>Captura la onda sonora cada 40 ms, estima los decibelios (~dB) y responde con inteligencia.</p>
+  <div class="grid">
+    <div class="f"><span class="ic">📈</span><div><b>Cálculo logarítmico (~dB)</b>Autocalibra el silencio base del salón (~40 dB) al encender y aplica una escala logarítmica con filtro suavizado.</div></div>
+    <div class="f"><span class="ic">〰️</span><div><b>Histéresis de 2 dB</b>Evita parpadeos erráticos cuando el sonido oscila en la frontera.</div></div>
+    <div class="f"><span class="ic">🖥️</span><div><b>Interfaz dual</b>Pantalla LCD 16x2 I2C con lectura en vivo, sensor KY-038 y teclado matricial.</div></div>
+    <div class="f"><span class="ic">🚦</span><div><b>Alerta inteligente</b>Semáforo LED tricolor y zumbador activo con tiempo de gracia.</div></div>
+    <div class="f"><span class="ic">⚙️</span><div><b>Rigor técnico</b>Comunicación directa I2C y barrido matricial nativo, sin librerías externas.</div></div>
+  </div>
+  <p class="note">Los dB son estimados: no sustituyen a un sonómetro certificado.</p>
+</section>
+
+<section class="c rv">
+  <div class="tag">03 · VERSATILIDAD PEDAGÓGICA</div><h2>Un sistema, tres dinámicas de aula</h2>
+  <p>Pruébalo: elige un modo y mueve el ruido.</p>
+  <div class="tabs" id="tb"></div>
+  <div class="bar" id="br"></div>
+  <div class="lt" id="sl"><div class="lp lg"></div><div class="lp ly"></div><div class="lp lr"></div></div>
+  <input type="range" id="rg" min="30" max="90" value="40" aria-label="Nivel de ruido">
+  <div style="text-align:center"><span class="db" id="sv">40</span> <small>~dB</small></div>
+  <p id="st" style="text-align:center;font-weight:600"></p>
+</section>
+
+<section class="c rv">
+  <div class="tag">INGENIERÍA · INTERFAZ INTUITIVA</div><h2>Control total en manos del aula</h2>
+  <p>Teclado matricial de 12 funciones, sin reprogramar. Toca una tecla:</p>
+  <div class="kp" id="kp"></div>
+  <p id="kd" class="note">Selecciona una tecla.</p>
+  <p class="note">Conserva su configuración en memoria permanente (EEPROM) incluso tras apagarse.</p>
+</section>
+
+<section class="c rv">
+  <div class="tag">VISIÓN · IMPACTO REAL</div><h2>Más que un prototipo, un cambio cultural</h2>
+  <p class="q">“La verdadera innovación escolar no consiste en imponer silencio, sino en enseñar a autorregularse.”</p>
+  <div class="grid">
+    <div class="f"><span class="ic">💚</span><div><b>Salud integral</b>Reduce el estrés auditivo estudiantil y cuida la voz del docente.</div></div>
+    <div class="f"><span class="ic">🔌</span><div><b>Autonomía sin librerías</b>Firmware ligero que arranca por sí solo en cualquier aula.</div></div>
+    <div class="f"><span class="ic">♻️</span><div><b>Diseño sostenible</b>Estructura tipo cartelera con materiales reciclables y consumo mínimo.</div></div>
+    <div class="f"><span class="ic">🏅</span><div><b>Sello Eco-Acústico</b>Un salón sin exceso de ruido es un ecosistema donde la atención y el respeto prosperan.</div></div>
+  </div>
+</section>
+
+<section class="c rv">
+  <div class="tag">EQUIPO ECO-ACÚSTICA ESCOLAR</div>
+  <div class="eq" style="margin-top:10px"><span>Karol Nina</span><span>Lelis Díaz</span><span>Janet Quispe</span><span>Ariana Calles</span></div>
+</section>
+<footer>EcoDecibel Pro · Ingeniería acústica aplicada a la educación</footer>
+</main>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+// Intro tipo "operación exitosa" con confeti
+var sp=$("sp"),cols=["#fff","#2fd4c0","#f5b301","#ff7ab8","#b388ff"];
+for(var i=0;i<46;i++){var s=document.createElement("span");s.className="cf";
+ s.style.left=Math.random()*100+"%";s.style.background=cols[i%5];
+ s.style.animationDuration=(2+Math.random()*2)+"s";s.style.animationDelay=(0.5+Math.random()*1.2)+"s";sp.appendChild(s)}
+function cerrar(){sp.classList.add("out")}
+$("go").onclick=cerrar;setTimeout(cerrar,4500);
+
+// Aparición al deslizar
+var rv=document.querySelectorAll(".rv");
+if("IntersectionObserver" in window){
+ var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)}})},{threshold:.12});
+ rv.forEach(function(n){io.observe(n)});
+}else{rv.forEach(function(n){n.classList.add("in")})}
+
+// Modos y estados
+var M=[{n:"Biblioteca",a:45,r:55,g:2},{n:"Clase",a:55,r:65,g:3},{n:"Actividad",a:65,r:75,g:5}];
+function lamps(box,db,m){var l=box.children,st=db>=m.r?2:db>=m.a?1:0;
+ for(var i=0;i<3;i++)l[i].classList.toggle("on",i===st);return st}
+
+// Semáforo de la portada (modo Clase)
+var t=0,hl=$("hl"),hv=$("hv");
+setInterval(function(){t+=1;var db=Math.round(57+22*Math.sin(t/16));hv.textContent=db;lamps(hl,db,M[1])},110);
+
+// Simulador por modo
+var mo=1,tb=$("tb"),rg=$("rg");
+M.forEach(function(m,i){var b=document.createElement("button");b.textContent=m.n;
+ b.onclick=function(){mo=i;sim()};tb.appendChild(b)});
+function sim(){var m=M[mo],db=+rg.value;
+ var a=(m.a-30)/60*100,r=(m.r-30)/60*100;
+ $("br").style.background="linear-gradient(90deg,var(--g) "+a+"%,var(--y) "+a+"%,var(--y) "+r+"%,var(--r) "+r+"%)";
+ var s=lamps($("sl"),db,m);$("sv").textContent=db;
+ $("st").textContent=["Verde: clima acústico óptimo para concentrarse.","Amarillo: aviso preventivo, sin interrumpir la sesión.","Rojo: tras "+m.g+" s sostenidos suena el zumbador."][s];
+ Array.prototype.forEach.call(tb.children,function(b,i){b.classList.toggle("on",i===mo)})}
+rg.oninput=sim;sim();
+
+// Teclado
+var K=[["1","Modo Biblioteca","El más estricto: verde por debajo de 45 dB, rojo desde 55 dB."],["2","Modo Clase","Verde por debajo de 55 dB, rojo desde 65 dB."],["3","Modo Actividad","El más tolerante: verde por debajo de 65 dB, rojo desde 75 dB."],["4","Más estricto","Baja los límites 2 dB (hasta −10 dB)."],["5","Alarma visual","Activa o apaga el LED parpadeante y el mensaje."],["6","Más tolerante","Sube los límites 2 dB (hasta +10 dB)."],["7","Pausa","Apaga LED y zumbador al instante."],["8","Zumbador","Activa o silencia el pitido."],["9","Ajuste del sensor","Muestra la lectura para regular el KY-038."],["*","Autocalibración","Junto con # mide el silencio base en 3 s."],["0","Restaurar","Vuelve a los valores iniciales (modo Clase)."],["#","Confirmar","Confirma la medición del silencio base."]];
+var kp=$("kp");
+K.forEach(function(k){var b=document.createElement("button");b.textContent=k[0];
+ b.onclick=function(){Array.prototype.forEach.call(kp.children,function(x){x.classList.remove("on")});
+  b.classList.add("on");$("kd").innerHTML="<b>"+k[1]+"</b><br>"+k[2]};kp.appendChild(b)});
+})();
+</script>
+</body></html>
